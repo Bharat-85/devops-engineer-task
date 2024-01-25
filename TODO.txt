@@ -1,0 +1,17 @@
+1- Fixed the errors - "Error: Incorrect attribute value type" by incorporating the security group id (.sg1_dev.id , .sg1_prod.id). 
+
+2- The dev and prod infra parts are separated with tfvars variable files which could be invoked via cli or pipeline by traversing to the respective path and passing the related tfvars files (dev/prod , global). This would avoid code redundancy and make the code flow more clare.
+VPC and SG are one-off kind of resources to be created so placed them on a separate folder. These are rarely amended so these can be created once via CLI or Pipeline by passing the respective tfvars files (dev/prod , global). This would avoid running unnecessary line of codes that are rarly changed.
+VPC/SG (directory stacks/network/vpc or sg)-
+terraform init
+terraform plan -var-file="../../../environments/dev.tfvars" -var-file="../../../environments/global.tfvars"
+Instances (directory stacks/main)-
+terraform init
+terraform plan -var-file="../../environments/dev.tfvars" -var-file="../../environments/global.tfvars"
+
+Note- First VPC, SG are created as these are refernced while provisioing instances.
+
+3- Module is coded to provision web instances. As there are 3 instances are required so coded Auto scaling to scale out to have the high availability. 
+4- Furthermore, we should have Auto scaling policy should be placed based on some matrix like CPU utilization check etc. 
+5- Use Terraform backend (like AWS S3) to store the state file so that the infra state can be preserved to provision swiftly and multiple developer can work parallelly. So, it makes the process seamless and automated.
+6- Documentation - is vital for understanding the purpose and usage of your Terraform configurations, especially when collaborating with others. So the code flow details could be added on README file.
